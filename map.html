@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Google Maps with QR Code Interaction</title>
+  <style>
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <button id="reset-button">リセット</button>
+  <script>
+    function initMap() {
+      const mapOptions = {
+        center: { lat: 35.785014, lng: 139.399027 }, // 初期中心座標
+        zoom: 17 // ズームレベル
+      };
+
+      const map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+      // 赤丸を表示する中心座標のリスト
+      const circleCenters = [
+        { id: 1, lat: 35.785014, lng: 139.399027 }, // お宝1
+        { id: 2, lat: 35.788606, lng: 139.399474 }, // お宝2
+        { id: 3, lat: 35.785553, lng: 139.398972 }, // お宝3
+        { id: 4, lat: 35.785894, lng: 139.399420 }  // お宝4
+      ];
+
+      // ローカルストレージから達成済み地点を取得
+      const completedIds = JSON.parse(localStorage.getItem("completedPoints")) || [];
+
+      // 赤丸を表示しつつ、達成済み地点を除外
+      circleCenters.forEach(center => {
+        if (completedIds.includes(center.id)) {
+          return; // 達成済み地点はスキップ
+        }
+
+        const circle = new google.maps.Circle({
+          center: { lat: center.lat, lng: center.lng },
+          radius: 10, // 半径（メートル）
+          map: map,
+          fillColor: "red", // 塗りつぶし色
+          fillOpacity: 0.6, // 塗りつぶし透明度
+          strokeColor: "red", // 外枠の色
+          strokeOpacity: 0.8, // 外枠の透明度
+          strokeWeight: 1 // 外枠の太さ
+        });
+      });
+    }
+
+    // リセットボタンの動作(テスト用)
+    document.getElementById("reset-button").addEventListener("click", () => {
+      localStorage.removeItem("completedPoints"); // ローカルストレージをクリア
+      location.reload(); // ページをリロードして初期状態に戻す
+    });
+  
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6bl3txIipCPuW7fnntAikOizcVJiPBaM&callback=initMap"
+    async defer>
+  </script>
+</body>
+
+</html>
